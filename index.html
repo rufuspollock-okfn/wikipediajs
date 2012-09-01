@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta charset="utf-8" />
+  <title>Wikipedia JS</title>
+   
+  <link href='http://fonts.googleapis.com/css?family=PT+Sans+Narrow' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.0/css/bootstrap-combined.min.css" />
+  <style type="text/css">
+    textarea {
+      height: 300px;
+      width: 90%;
+    }
+    
+    .content {
+      margin-top: 20px;
+    }
+
+    img.thumbnail {
+      float: right;
+    }
+
+    .clear {
+      clear: both;
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar navbar-static-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <a class="brand" href="#">WikipediaJS - a Javascript library for Wikipedia Data</a>
+        <ul class="nav pull-right">
+          <li>
+            <a class="nav-logo pull-left" href="http://okfnlabs.org/" title="An Open Knowledge Foundation Labs Project">
+              <img src="http://assets.okfn.org/p/okfn/img/logo_28x30.png" alt="Open Knowledge Foundation logo" style="margin-top: -5px; margin-right: 0;" />
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="content container">
+    <div class="page-header">
+      <h1>
+        Wikipedia.JS
+        <small>is a small Javascript library for accessing information in Wikipedia articles such as dates, places, abstracts and more ...</small>
+      </h1>
+    </div>
+    <h2>The Library</h2>
+    <div class="row">
+      <div class="span6">
+        <h3>Get the code</h3>
+        <p>You can grab the (incredibly lightweight) <a href="wikipedia.js">wikipedia.js library from here</a>.
+        <p>Want to <a href="docs/wikipedia.html">browse the annotated source</a>?</p>
+        <p>The library is the work of <a href="http://okfnlabs.org/">Open Knowledge Foundation Labs</a> and <a href="http://rufuspollock.org/">Rufus Pollock</a> in particular. It is, in essence, a small wrapper around the data and <a href="http://dbpedia.org/sparql/">APIs</a> of the <a href="http://dbpedia.org/">DBPedia project</a> and it is they who have done all the heavy lifting of extracting structured data from Wikipedia - huge credit and thanks to DBPedia folks!</p>
+      </div>
+      <div class="span6">
+        <h3>Using it</h3>
+        <pre><code>var info = WIKIPEDIA.getData('http://en.wikipedia.org/wiki/Invasion_of_Normandy');
+alert(info.summary.title);
+console.log(info);</code></pre>
+        <p><em>Or, check out the more detailed demo below ...</em></p>
+      </div>
+    </div>
+
+    <h2>A Demo</h2>
+    <form action="" method="GET" class="form-inline">
+      <label>Wikipedia URL</label>
+      <input name="url" type="text" class="url span6" placeholder="Enter a Wikipedia or DBPedia URL" />
+      <button>Go &raquo;</button>
+    </form>
+
+    <p>This simple demo uses <a href="wikipedia.js">wikipedia.js library</a> to load information on the given page and display it below. The <a href="js/app.js">JS source for the demo is here</a> while the HTML source is just this page!</p>
+
+
+    <div class="loading" style="display: none;">
+      <strong>Loading</strong> <img src="http://assets.okfn.org/images/icons/ajaxload-circle.gif" />
+    </div>
+
+    <div class="results" style="display: none;">
+      <h3>Results</h3>
+
+      <div class="summary well">
+        <img src="" class="thumbnail" />
+        <h4>
+          <span class="title"></span>
+        </h4>
+        <p>
+          Location: <span class="place"></span>
+          <br />
+          Dates: <span class="start"></span> &mdash; <span class="end"></span>
+        </p>
+        <p class="summary"></p>
+        <div class="clear"></div>
+
+        <h4>Raw JSON</h4>
+        <textarea class="raw"></textarea>
+      </div>
+
+      <p>
+        <a href="#raw" class="js-data-summary">Show raw RDF information &raquo;</a>
+      </p>
+
+      <div id="raw" class="data-summary" style="display: none;">
+        <h3>
+          RDF Summary
+          (<span class="count"></span> properties found)
+        </h3>
+        <pre class="properties"></pre>
+
+        <h4>Raw JSON</h4>
+        <textarea class="results-json"></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script src="wikipedia.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
