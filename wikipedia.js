@@ -76,6 +76,15 @@ var WIKIPEDIA = function() {
     wgs: "http://www.w3.org/2003/01/geo/wgs84_pos#"
   };
 
+  my._expandNamespacePrefix = function(uriWithPrefix) {
+    for(key in WIKIPEDIA.PREFIX) {
+      if (uriWithPrefix.indexOf(key + ':') == 0) {
+        uriWithPrefix = WIKIPEDIA.PREFIX[key] + uriWithPrefix.slice(key.length + 1);
+      }
+    }
+    return uriWithPrefix;
+  };
+
   // ### lookupProperty
   // 
   // lookup a property value given a standard RDF/JSON property dictionary
@@ -90,12 +99,7 @@ var WIKIPEDIA = function() {
   //          ],
   //       ...
   my._lookupProperty = function(dict, property) {
-    // first expand namespace 
-    for(key in WIKIPEDIA.PREFIX) {
-      if (property.indexOf(key + ':') == 0) {
-        property = WIKIPEDIA.PREFIX[key] + property.slice(key.length + 1);
-      }
-    }
+    property = my._expandNamespacePrefix(property);
     var values = dict[property];
     for (idx in values) {
       // only take english values if lang is present
@@ -130,8 +134,8 @@ var WIKIPEDIA = function() {
       title: lkup('rdfs:label'),
       description: lkup('dbo:abstract'),
       summary: lkup('rdfs:comment'),
-      birthDate: lkup('dbp:birthDate'),
-      deathDate: lkup('dbp:deathDate'),
+      startDates: lkup(['dbp:birthDate', 'dbo:formationDate', 'dbo:foundingYear']),
+      endDates: lkup('dbp:deathDate'),
       // both dbp:date and dbo:date are usually present but dbp:date is
       // frequently "bad" (e.g. just a single integer rather than a date)
       // whereas ontology value is better
@@ -144,11 +148,37 @@ var WIKIPEDIA = function() {
       location: {
         lat: lkup('wgs:lat'),
         lon: lkup('wgs:long')
-      }
+      },
+      types: [],
+      type: null
     };
 
-    summaryInfo.start = summaryInfo.birthDate || summaryInfo.date;
-    summaryInfo.end = summaryInfo.deathDate;
+    // getLastPartOfUrl
+    function gl(url) {
+      var parts = url.split('/');
+      return parts[parts.length-1];
+    }
+
+    var typeUri = my._expandNamespacePrefix('rdf:type');
+    var types = [];
+    var typeObjs = properties[typeUri];
+    for(idx in typeObjs) {
+      var value = typeObjs[idx].value;
+      // let's be selective
+      // ignore yago and owl stuff
+      if (value.indexOf('dbpedia.org/ontology') != -1 || value.indexOf('schema.org') != -1) {
+        // TODO: ensure uniqueness (do not push same thing ...)
+        summaryInfo.types.push(gl(value));
+        // use schema.org value as the default
+        if (value.indexOf('schema.org') != -1) {
+          summaryInfo.type = gl(value);
+        }
+      }
+
+    }
+
+    summaryInfo.start = summaryInfo.startDates.length > 0 ? summaryInfo.startDates[0] : summaryInfo.date;
+    summaryInfo.end = summaryInfo.endDates;
     summaryInfo.location.title = summaryInfo.place || summaryInfo.birthPlace ||
       summaryInfo.deathPlace;
     summaryInfo.image = summaryInfo.images ? summaryInfo.images[0] : null;
