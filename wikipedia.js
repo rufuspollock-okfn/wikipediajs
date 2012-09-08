@@ -143,7 +143,7 @@ var WIKIPEDIA = function() {
       images: lkup(['dbo:thumbnail', 'foaf:depiction', 'foaf:img']),
       location: {
         lat: lkup('wgs:lat'),
-        lon: lkup('wgs:lon')
+        lon: lkup('wgs:long')
       }
     };
 
