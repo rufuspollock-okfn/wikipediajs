@@ -28,7 +28,7 @@ var WIKIPEDIA = function() {
         summary: my.extractSummary(url, data)
       })
     }
-    my.getRawJSON(url, onSuccess, error);
+    my.getRawJson(url, onSuccess, error);
   }
 
   // ### _getDbpediaUrl
@@ -43,10 +43,10 @@ var WIKIPEDIA = function() {
     return url;
   };
 
-  // ### getRawJSON
+  // ### getRawJson
   //
   // get raw RDF JSON for DBPedia resource from DBPedia SPARQL endpoint
-  my.getRawJSON = function(url, callback, error) {
+  my.getRawJson = function(url, callback, error) {
     var sparqlQuery = 'DESCRIBE <{{url}}>'.replace('{{url}}', url);
     var jqxhr = $.ajax({
       url: my.endpoint,
