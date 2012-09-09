@@ -31,6 +31,12 @@ jQuery(function() {
       // raw JSON
       var dataAsJson = JSON.stringify(rawData, null, '    ')
       $('.results-json').val(dataAsJson);
+
+      $('html,body').animate({
+        scrollTop: $('#demo').offset().top
+        },
+        'slow'
+      );
     };
 
     WIKIPEDIA.getData(q.url, display, function(error) {
