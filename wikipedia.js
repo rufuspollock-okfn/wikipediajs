@@ -134,15 +134,15 @@ var WIKIPEDIA = function() {
       title: lkup('rdfs:label'),
       description: lkup('dbo:abstract'),
       summary: lkup('rdfs:comment'),
-      startDates: lkup(['dbp:birthDate', 'dbo:formationDate', 'dbo:foundingYear']),
-      endDates: lkup('dbp:deathDate'),
+      startDates: lkup(['dbo:birthDate', 'dbo:formationDate', 'dbo:foundingYear']),
+      endDates: lkup('dbo:deathDate'),
       // both dbp:date and dbo:date are usually present but dbp:date is
       // frequently "bad" (e.g. just a single integer rather than a date)
       // whereas ontology value is better
       date: lkup('dbo:date'),
       place: lkup('dbp:place'),
-      birthPlace: lkup('dpb:birthPlace'),
-      deathPlace: lkup('dpb:deathPlace'),
+      birthPlace: lkup('dbo:birthPlace'),
+      deathPlace: lkup('dbo:deathPlace'),
       source: lkup('foaf:page'),
       images: lkup(['dbo:thumbnail', 'foaf:depiction', 'foaf:img']),
       location: {
@@ -166,7 +166,13 @@ var WIKIPEDIA = function() {
       var value = typeObjs[idx].value;
       // let's be selective
       // ignore yago and owl stuff
-      if (value.indexOf('dbpedia.org/ontology') != -1 || value.indexOf('schema.org') != -1) {
+      if (
+        value.indexOf('dbpedia.org/ontology') != -1
+        ||
+        value.indexOf('schema.org') != -1
+        ||
+        value.indexOf('foaf/0.1') != -1
+      ) {
         // TODO: ensure uniqueness (do not push same thing ...)
         summaryInfo.types.push(gl(value));
         // use schema.org value as the default
@@ -174,13 +180,22 @@ var WIKIPEDIA = function() {
           summaryInfo.type = gl(value);
         }
       }
-
+    }
+    if (!summaryInfo.type && summaryInfo.types.length > 0) {
+      summaryInfo.type = summaryInfo.types[0];
     }
 
     summaryInfo.start = summaryInfo.startDates.length > 0 ? summaryInfo.startDates[0] : summaryInfo.date;
     summaryInfo.end = summaryInfo.endDates;
-    summaryInfo.location.title = summaryInfo.place || summaryInfo.birthPlace ||
-      summaryInfo.deathPlace;
+    if (!summaryInfo.place) {
+      // death place is more likely more significant than death place
+      summaryInfo.place = summaryInfo.deathPlace || summaryInfo.birthPlace;
+    }
+    // if place a uri clean it up ...
+    if (summaryInfo.place) {
+      summaryInfo.place = gl(summaryInfo.place);
+    }
+    summaryInfo.location.title = summaryInfo.place;
     summaryInfo.image = summaryInfo.images ? summaryInfo.images[0] : null;
 
     return summaryInfo;
