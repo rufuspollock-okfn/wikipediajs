@@ -49,7 +49,7 @@ var WIKIPEDIA = function() {
     } else if (url.indexOf('dbpedia.org')!=-1) {
       return url;
     } else {
-      url = 'http://dbpedia.org/resource/' + url.replace(' ', '_');
+      url = 'http://dbpedia.org/resource/' + url.replace(/ /g, '_');
       return url;
     }
   };
