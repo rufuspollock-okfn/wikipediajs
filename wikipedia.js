@@ -19,28 +19,39 @@ var WIKIPEDIA = function() {
   //
   // Function is asynchronous as we have to call out to DBPedia to get the
   // info.
-  my.getData = function(wikipediaUrl, callback, error) {
-    var url = my._getDbpediaUrl(wikipediaUrl);
+  my.getData = function(wikipediaUrlOrPageName, callback, error) {
+    var url = my._getDbpediaUrl(wikipediaUrlOrPageName);
     function onSuccess(data) {
-      callback({
+      var out = {
         raw: data,
         dbpediaUrl: url,
-        summary: my.extractSummary(url, data)
-      })
+        summary: null,
+      }
+      if (data) {
+        out.summary = my.extractSummary(url, data);
+      } else {
+        out.error = 'Failed to retrieve data. Is the URL or page name correct?';
+      }
+      callback(out);
     }
     my.getRawJson(url, onSuccess, error);
   }
 
   // ### _getDbpediaUrl
   //
-  // Convert a Wikipedia url convert to DBPedia url
+  // Convert the incoming URL or page name to a DBPedia url
   my._getDbpediaUrl = function(url) {
-    if (url.indexOf('wikipedia')) {
+    if (url.indexOf('wikipedia')!=-1) {
       var parts = url.split('/');
       var title = parts[parts.length-1];
       url = 'http://dbpedia.org/resource/' + title;
+      return url;
+    } else if (url.indexOf('dbpedia.org')!=-1) {
+      return url;
+    } else {
+      url = 'http://dbpedia.org/resource/' + url.replace(' ', '_');
+      return url;
     }
-    return url;
   };
 
   // ### getRawJson
