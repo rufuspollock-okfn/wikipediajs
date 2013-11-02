@@ -25,8 +25,8 @@ var WIKIPEDIA = function() {
       var out = {
         raw: data,
         dbpediaUrl: url,
-        summary: null,
-      }
+        summary: null
+      };
       if (data) {
         out.summary = my.extractSummary(url, data);
       } else {
@@ -35,7 +35,7 @@ var WIKIPEDIA = function() {
       callback(out);
     }
     my.getRawJson(url, onSuccess, error);
-  }
+  };
 
   // ### _getDbpediaUrl
   //
@@ -88,8 +88,8 @@ var WIKIPEDIA = function() {
   };
 
   my._expandNamespacePrefix = function(uriWithPrefix) {
-    for(key in WIKIPEDIA.PREFIX) {
-      if (uriWithPrefix.indexOf(key + ':') == 0) {
+    for(var key in WIKIPEDIA.PREFIX) {
+      if (uriWithPrefix.indexOf(key + ':') === 0) {
         uriWithPrefix = WIKIPEDIA.PREFIX[key] + uriWithPrefix.slice(key.length + 1);
       }
     }
@@ -112,7 +112,7 @@ var WIKIPEDIA = function() {
   my._lookupProperty = function(dict, property) {
     property = my._expandNamespacePrefix(property);
     var values = dict[property];
-    for (idx in values) {
+    for (var idx in values) {
       // only take english values if lang is present
       if (!values[idx]['lang'] || values[idx].lang == 'en') {
         return values[idx].value;
@@ -129,7 +129,7 @@ var WIKIPEDIA = function() {
     function lkup(attribs) {
       if (attribs instanceof Array) {
         var out = [];
-        for (idx in attribs) {
+        for (var idx in attribs) {
           var _tmp = my._lookupProperty(properties, attribs[idx]);
           if (_tmp) {
             out.push(_tmp);
@@ -173,17 +173,11 @@ var WIKIPEDIA = function() {
     var typeUri = my._expandNamespacePrefix('rdf:type');
     var types = [];
     var typeObjs = properties[typeUri];
-    for(idx in typeObjs) {
+    for(var idx in typeObjs) {
       var value = typeObjs[idx].value;
       // let's be selective
       // ignore yago and owl stuff
-      if (
-        value.indexOf('dbpedia.org/ontology') != -1
-        ||
-        value.indexOf('schema.org') != -1
-        ||
-        value.indexOf('foaf/0.1') != -1
-      ) {
+      if (value.indexOf('dbpedia.org/ontology') != -1 || value.indexOf('schema.org') != -1 || value.indexOf('foaf/0.1') != -1) {
         // TODO: ensure uniqueness (do not push same thing ...)
         summaryInfo.types.push(gl(value));
         // use schema.org value as the default
