@@ -9,7 +9,15 @@ var WIKIPEDIA = function() {
   // Return structured information (via callback) on the provided Wikipedia URL by querying
   // the DBPedia SPARQL endpoint and then tidying the data up.
   //
-  // Data is return in the form of the following hash:
+  // @param: wikipediaUrlOrPageName. A wikipedia URL or pageName or an object
+  // with following struture:
+  //
+  //     {
+  //       url: wikipediaURLOrPageName,
+  //       raw: false // do not include the raw data in what is returned
+  //     }
+  //
+  // @return: Data is return in the form of the following hash:
   //
   //    {
   //      raw: the-raw-json-from-dbpedia,
